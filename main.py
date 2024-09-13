@@ -7,11 +7,14 @@ import torchvision
 import numpy as np
 import torch.optim as optim
 import sys
+from tqdm import tqdm
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-print(device)
+print(f"device: {device}")
 transformation = transforms.Compose([
-    transforms.Resize((256,256)), # rets tensor uint8 #TODO increase
+    transforms.Resize((256,256)), # rets tensor uint8
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomRotation(degrees=30),
     # transforms uint8 to float for normalize
     transforms.ConvertImageDtype(torch.float),
     # expects float
@@ -32,16 +35,22 @@ import torch.nn.functional as F
 class Net(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(3, 64, 5)
+        self.conv1 = nn.Conv2d(3, 16, 5)
+        self.conv2 = nn.Conv2d(16, 32, 5)
+        self.conv3 = nn.Conv2d(32, 64, 5)
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(64, 256, 5)
-        self.fc1 = nn.Linear(952_576, 120) # TODO hard coded checkout
+        self.bn1 = nn.BatchNorm2d(16)
+        self.bn2 = nn.BatchNorm2d(32)
+        self.bn3 = nn.BatchNorm2d(64)
+        self.fc1 = nn.Linear(50_176, 120) # TODO hard coded checkout
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 2)
 
     def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
+        x = self.pool(self.bn1(F.relu(self.conv1(x)))) # (256-5+2*0)/1 + 1 = 252, 252/2 = 126
+        x = self.pool(self.bn2(F.relu(self.conv2(x)))) # (126-5+2*0)/1 + 1 = 122, 122/2 = 61
+        x = self.pool(self.bn3(F.relu(self.conv3(x)))) # (61-5+2*0)/1 + 1 = 57, 57/2 = 28
+        # output is 64 x 28 x 28 = 50_176
         x = torch.flatten(x, 1) # 1 is so we flatten over dim=1
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -51,10 +60,10 @@ class Net(nn.Module):
 net = Net().to(device)
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(net.parameters(), lr=1e-4)
+optimizer = optim.Adam(net.parameters(), lr=1e-4, weight_decay=1e-4)
 
 print("Starting Training...")
-for epoch in range(2):
+for epoch in range(3):
     loss_sum = 0.0
     for i, data in enumerate(train_dataloader):
         images, labels = data[0].to(device), data[1].to(device)
@@ -86,7 +95,6 @@ def imshow(img):
 test_loss = 0.0
 for i, data in enumerate(test_dataloader):
     images, labels = data[0].to(device), data[1].to(device)
-    print(labels)
     outputs = net(images)
     loss = criterion(outputs, labels)
     # imshow(torchvision.utils.make_grid(images))
