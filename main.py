@@ -27,7 +27,7 @@ train_data = CustomImageDataset(
 
 train_dataloader = DataLoader(train_data, batch_size=32, shuffle=True)
 
-classes = ["tank", "aircraft"]
+classes = ["tank", "aircraft", "drone"]
 
 import torch.nn as nn
 import torch.nn.functional as F
@@ -42,15 +42,16 @@ class Net(nn.Module):
         self.bn1 = nn.BatchNorm2d(16)
         self.bn2 = nn.BatchNorm2d(32)
         self.bn3 = nn.BatchNorm2d(64)
-        self.fc1 = nn.Linear(50_176, 120) # TODO hard coded checkout
+        self.fc1 = nn.Linear(12_544, 120) # TODO hard coded checkout
         self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 2)
+        self.fc3 = nn.Linear(84, 3)
 
     def forward(self, x):
         x = self.pool(self.bn1(F.relu(self.conv1(x)))) # (256-5+2*0)/1 + 1 = 252, 252/2 = 126
         x = self.pool(self.bn2(F.relu(self.conv2(x)))) # (126-5+2*0)/1 + 1 = 122, 122/2 = 61
         x = self.pool(self.bn3(F.relu(self.conv3(x)))) # (61-5+2*0)/1 + 1 = 57, 57/2 = 28
-        # output is 64 x 28 x 28 = 50_176
+        x = self.pool(x) # 28 / 2 = 14
+        # output is 64 x 14 x 14 = 12_544
         x = torch.flatten(x, 1) # 1 is so we flatten over dim=1
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -63,7 +64,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(net.parameters(), lr=1e-4, weight_decay=1e-4)
 
 print("Starting Training...")
-for epoch in range(3):
+for epoch in range(6):
     loss_sum = 0.0
     for i, data in enumerate(train_dataloader):
         images, labels = data[0].to(device), data[1].to(device)
@@ -92,15 +93,28 @@ def imshow(img):
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
     plt.show()
 
-test_loss = 0.0
-for i, data in enumerate(test_dataloader):
-    images, labels = data[0].to(device), data[1].to(device)
-    outputs = net(images)
-    loss = criterion(outputs, labels)
-    # imshow(torchvision.utils.make_grid(images))
-    test_loss += loss
-print(f"test loss: {test_loss / i}")
+correct_pred = {class_name: 0 for class_name in classes}
+total_pred = {class_name: 0 for class_name in classes}
 
+
+with torch.no_grad():
+    for i, data in enumerate(test_dataloader):
+        images, labels = data[0].to(device), data[1].to(device)
+        outputs = net(images)
+        # print(f"outputs: {outputs}")
+        _, predictions = torch.max(outputs, dim=1)
+        # print(f"predictions: {predictions}")
+        for label, prediction in zip(labels, predictions):
+            if label == prediction:
+                correct_pred[classes[label]] += 1
+            total_pred[classes[label]] += 1
+
+print(f"accuracy:")
+print(f"\ttank: ", correct_pred["tank"] / total_pred["tank"])
+print(f"\taircraft: ", correct_pred["aircraft"] / total_pred["aircraft"])
+print(f"\tdrone: ", correct_pred["drone"] / total_pred["drone"])
+
+sys.exit()
 
 # train_images, train_labels = next(iter(train_dataloader))
 # print(f"Feature batch shape: {train_images.size()}")
