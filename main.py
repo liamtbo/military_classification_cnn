@@ -9,12 +9,10 @@ import torch.optim as optim
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(f"device: {device}")
 transformation = transforms.Compose([
-    transforms.Resize((256,256)), # rets tensor uint8
+    transforms.Resize((256,256)),
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(degrees=30),
-    # transforms uint8 to float for normalize
     transforms.ConvertImageDtype(torch.float),
-    # expects float
     transforms.Normalize(mean=[0.5,0.5,0.5], std=[0.5,0.5,0.5])
 ])
 
@@ -44,12 +42,11 @@ class Net(nn.Module):
         self.fc3 = nn.Linear(84, 3)
 
     def forward(self, x):
-        x = self.pool(self.bn1(F.relu(self.conv1(x)))) # (256-5+2*0)/1 + 1 = 252, 252/2 = 126
-        x = self.pool(self.bn2(F.relu(self.conv2(x)))) # (126-5+2*0)/1 + 1 = 122, 122/2 = 61
-        x = self.pool(self.bn3(F.relu(self.conv3(x)))) # (61-5+2*0)/1 + 1 = 57, 57/2 = 28
-        x = self.pool(x) # 28 / 2 = 14
-        # output is 64 x 14 x 14 = 12_544
-        x = torch.flatten(x, 1) # 1 is so we flatten over dim=1
+        x = self.pool(self.bn1(F.relu(self.conv1(x)))) 
+        x = self.pool(self.bn2(F.relu(self.conv2(x)))) 
+        x = self.pool(self.bn3(F.relu(self.conv3(x)))) 
+        x = self.pool(x) 
+        x = torch.flatten(x, 1) 
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
@@ -84,23 +81,14 @@ test_data = CustomImageDataset(
 )
 test_dataloader = DataLoader(test_data, batch_size=32, shuffle=False)
 
-def imshow(img):
-    img = img / 2 + 0.5     # unnormalize
-    npimg = img.cpu().numpy() 
-    plt.imshow(np.transpose(npimg, (1, 2, 0)))
-    plt.show()
-
 correct_pred = {class_name: 0 for class_name in classes}
 total_pred = {class_name: 0 for class_name in classes}
-
 
 with torch.no_grad():
     for i, data in enumerate(test_dataloader):
         images, labels = data[0].to(device), data[1].to(device)
         outputs = cnn(images)
-        # print(f"outputs: {outputs}")
         _, predictions = torch.max(outputs, dim=1)
-        # print(f"predictions: {predictions}")
         for label, prediction in zip(labels, predictions):
             if label == prediction:
                 correct_pred[classes[label]] += 1
