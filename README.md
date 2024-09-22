@@ -3,7 +3,7 @@
 <!-- <img src="images/dji_matrice_300_rtk_drones.png" alt="Drone" style="width: 35%; display: inline-block;"/> 
 <img src="images/leopard2.png" alt="Tank" style="width: 45%; display: inline-block;"/> -->
 <p float="left">
-  <img src="images/dji_matrice_300_rtk_drones.png" alt="Drone" width="45%" />
+  <img src="images/dji_matrice_300_rtk_drones.png" alt="Drone" width="35%" />
   <img src="images/leopard2.png" alt="Tank" width="45%" />
 </p>
 This project implements a Convolutional Neural Network (CNN) using PyTorch to classify images into three categories: tank, aircraft, and drone. It utilizes custom image datasets for training and testing, and applies several transformations to augment the data.
