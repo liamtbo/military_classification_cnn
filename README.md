@@ -1,7 +1,5 @@
 # Image Classification of Military Vehicles CNN
 
-<!-- <img src="images/dji_matrice_300_rtk_drones.png" alt="Drone" style="width: 35%; display: inline-block;"/> 
-<img src="images/leopard2.png" alt="Tank" style="width: 45%; display: inline-block;"/> -->
 <p float="left">
   <img src="images/dji_matrice_300_rtk_drones.png" alt="Drone" width="35%" />
   <img src="images/leopard2.png" alt="Tank" width="45%" />
@@ -14,7 +12,7 @@ The model is trained on a dataset of labeled images and tested on a separate dat
 
 Before running the project, ensure that you have the required dependencies installed. You can install them using pip:
 
-    $pip install torch torchvision matplotlib tqdm numpy
+    pip install torch torchvision matplotlib numpy
 
 ## Jumping Right In
 ### To review code and train a new cnn
@@ -53,7 +51,7 @@ The model is trained for 10 epochs using a CrossEntropyLoss function and the Ada
 
 To start training:
 
-    $python main.py
+    python main.py
 
 ### Training loop
 

@@ -3,11 +3,8 @@ from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import torch
-import torchvision
 import numpy as np
 import torch.optim as optim
-import sys
-from tqdm import tqdm
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(f"device: {device}")
