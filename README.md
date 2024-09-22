@@ -11,14 +11,14 @@ The model is trained on a dataset of labeled images and tested on a separate dat
 
 Before running the project, ensure that you have the required dependencies installed. You can install them using pip:
 
-    $pip install torch torchvision matplotlib tqdm
+    $pip install torch torchvision matplotlib tqdm numpy
 
 ## Jumping Right In
 ### To review code and train a new cnn
     python main.py
 ### To run a pretrained cnn
     python run_trained_cnn.py
-    
+
 ## Dataset
 
 The project assumes that you have a dataset of images with corresponding labels. The dataset should be divided into two parts: a training set and a testing set. Each set should have an accompanying CSV file (train_csv.csv and test_csv.csv), which lists the image file paths and labels.
