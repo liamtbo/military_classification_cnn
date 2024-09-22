@@ -68,3 +68,17 @@ print(f"accuracy:")
 print(f"\ttank: ", correct_pred["tank"] / total_pred["tank"])
 print(f"\taircraft: ", correct_pred["aircraft"] / total_pred["aircraft"])
 print(f"\tdrone: ", correct_pred["drone"] / total_pred["drone"])
+
+# train_images, train_labels = next(iter(train_dataloader))
+# print(f"Feature batch shape: {train_images.size()}")
+# print(f"Labels batch shape: {train_labels.size()}")
+# print(train_labels)
+
+
+# def imshow(img):
+#     img = img / 2 + 0.5     # unnormalize
+#     npimg = img.numpy()
+#     plt.imshow(np.transpose(npimg, (1, 2, 0)))
+#     plt.show()
+
+# imshow(torchvision.utils.make_grid(train_images))

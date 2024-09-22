@@ -116,16 +116,3 @@ print(f"\tdrone: ", correct_pred["drone"] / total_pred["drone"])
 
 torch.save(cnn.state_dict(), "cnn_parameters.pth")
 
-# train_images, train_labels = next(iter(train_dataloader))
-# print(f"Feature batch shape: {train_images.size()}")
-# print(f"Labels batch shape: {train_labels.size()}")
-# print(train_labels)
-
-
-# def imshow(img):
-#     img = img / 2 + 0.5     # unnormalize
-#     npimg = img.numpy()
-#     plt.imshow(np.transpose(npimg, (1, 2, 0)))
-#     plt.show()
-
-# imshow(torchvision.utils.make_grid(train_images))
