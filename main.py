@@ -42,7 +42,7 @@ class Net(nn.Module):
         self.bn1 = nn.BatchNorm2d(16)
         self.bn2 = nn.BatchNorm2d(32)
         self.bn3 = nn.BatchNorm2d(64)
-        self.fc1 = nn.Linear(12_544, 120) # TODO hard coded checkout
+        self.fc1 = nn.Linear(12_544, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 3)
 
@@ -58,18 +58,18 @@ class Net(nn.Module):
         x = self.fc3(x)
         return x
 
-net = Net().to(device)
+cnn = Net().to(device)
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(net.parameters(), lr=1e-4, weight_decay=1e-4)
+optimizer = optim.Adam(cnn.parameters(), lr=1e-4, weight_decay=1e-4)
 
 print("Starting Training...")
-for epoch in range(6):
+for epoch in range(10):
     loss_sum = 0.0
     for i, data in enumerate(train_dataloader):
         images, labels = data[0].to(device), data[1].to(device)
         optimizer.zero_grad()
-        outputs = net(images)
+        outputs = cnn(images)
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
@@ -100,7 +100,7 @@ total_pred = {class_name: 0 for class_name in classes}
 with torch.no_grad():
     for i, data in enumerate(test_dataloader):
         images, labels = data[0].to(device), data[1].to(device)
-        outputs = net(images)
+        outputs = cnn(images)
         # print(f"outputs: {outputs}")
         _, predictions = torch.max(outputs, dim=1)
         # print(f"predictions: {predictions}")
@@ -114,7 +114,7 @@ print(f"\ttank: ", correct_pred["tank"] / total_pred["tank"])
 print(f"\taircraft: ", correct_pred["aircraft"] / total_pred["aircraft"])
 print(f"\tdrone: ", correct_pred["drone"] / total_pred["drone"])
 
-sys.exit()
+torch.save(cnn.state_dict(), "cnn_parameters.pth")
 
 # train_images, train_labels = next(iter(train_dataloader))
 # print(f"Feature batch shape: {train_images.size()}")
