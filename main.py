@@ -1,9 +1,7 @@
 from dataset_class import CustomImageDataset
 from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
-import matplotlib.pyplot as plt
 import torch
-import numpy as np
 import torch.optim as optim
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

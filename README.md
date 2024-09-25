@@ -10,9 +10,12 @@ The model is trained on a dataset of labeled images and tested on a separate dat
 
 ## Setup
 
-Before running the project, ensure that you have the required dependencies installed. You can install them using pip:
+Before running the project, ensure that you have the required dependencies installed. Make sure you download the the correct Pytorch for your system:
+    https://pytorch.org/
 
-    pip install torch torchvision matplotlib numpy
+You can install the rest using pip:
+
+    pip install matplotlib numpy
 
 ## Jumping Right In
 ### To review code and train a new cnn
