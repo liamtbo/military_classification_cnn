@@ -10,7 +10,7 @@ The model is trained on a dataset of labeled images and tested on a separate dat
 
 ## Setup
 
-Before running the project, ensure that you have the required dependencies installed. Make sure you download the the correct Pytorch for your system:
+Before running the project, ensure that you have the required dependencies installed. Click onn this link and scroll down to make sure you download the the correct Pytorch for your system:
     https://pytorch.org/
 
 You can install the rest using pip:
