@@ -16,8 +16,8 @@ Please also install pandas with pip:
     pip install pandas
 
 ## Jumping Right In
-### To review code and train a new cnn
-    python main.py
+### To review code checkout
+    main.py
 ### To run a pretrained cnn
     python run_trained_cnn.py
 
